@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Anime GIFs</title>
+    <style>
+    body{
+        background-color: lightslategray;
+    }
+
+    #anime-form{
+        float: right;
+    }
+
+    #anime-input{
+        font-size: 30px;
+    }
+    
+    label{
+        font-size: 30px;
+    }
+
+    #add-anime{
+        font-size: 20px;
+    }
+</style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- add button -->
+        <form id="anime-form">
+            <label for="anime-input">Add an Anime</label>
+            <input type="text" id="anime-input">
+            <br>
+            <!-- Button triggers new anime to be added -->
+            <input id="add-anime" type="submit" value="Add an Anime">
+
+        </form>
+        <!-- where buttons will appear -->
+        <div id="buttons-view"></div>
+        <!-- where gifs will appear -->
+        <div id="gifs-appear-here"></div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script type="text/javascript">
+            // Initial array of anime
+            var animes = ["One Piece", "Dragonball", "Bleach", "Naruto"];
+
+            $("#add-anime").on("click", function (event) {
+                $("#gifs-appear-here").empty();
+                event.preventDefault();
+
+                // displayAnime();
+                // Then dynamicaly generating buttons for each movie in the array
+                // This code $("<button>") is all jQuery needs to create the beginning and end tag. (<button></button>)
+                var a = $("<button>");
+                // Adding a class of movie-btn to our button
+                a.addClass("anime-btn");
+                // Adding a data-attribute
+                a.attr("data-name", $("#anime-input").val());
+                // Providing the initial button text
+                a.text($("#anime-input").val());
+                // Adding the button to the buttons-view div
+                $("#buttons-view").append(a);
+                console.log(event);
+            });
+            $(document).on("click", ".anime-btn", displayAnime);
+
+
+
+
+            // displayMovieInfo function re-renders the HTML to display the appropriate content
+            function displayAnime() {
+
+
+                // Grabbing and storing the data-anime property value from the button
+                var anime = $("#anime-input").val();
+                console.log(anime);
+                // Constructing a URL to search Giphy for the name of the person who said the quote
+                var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+                    anime + "&api_key=KkakWGVYFvtABacU9o7EUqBhE9YA3fsW&limit=10";
+                $.ajax({
+                    url: queryURL,
+                    method: "GET"
+                }).then(function (response) {
+                    // storing the data from the AJAX request in the results variable
+                    var results = response.data;
+
+                    // Looping through each result item
+                    for (var i = 0; i < results.length; i++) {
+
+                        // Creating and storing a div tag
+                        var animeDiv = $("<div>");
+
+                        // Creating a paragraph tag with the result item's rating
+                        var p = $("<p>").text("Rating: " + results[i].rating);
+
+                        // Creating and storing an image tag also creating a class for css
+                        var animeImage = $("<img>").addClass("gifBorder");;
+
+                        // Setting the src attribute of the image to a property pulled off the result item
+                        // add states of animate and still which will be toggled 
+                        animeImage.attr("src", results[i].images.fixed_height.url);
+                        animeImage.attr("data-still", results[i].images.fixed_height_still.url);
+                        animeImage.attr("data-animate", results[i].images.fixed_height.url)
+                        animeImage.attr("data-state", "still")
+                        animeImage.addClass("gif");
+
+                        // Appending the paragraph and image tag to the animalDiv
+                        animeDiv.append(p);
+                        animeDiv.append(animeImage);
+
+                        // Prependng the animalDiv to the HTML page in the "#gifs-appear-here" div
+                        $("#gifs-appear-here").prepend(animeDiv);
+                    }
+                });
+            }
+
+            // When the user clicks one of the still GIPHY images, and it animates. 
+            //When the user clicks the gif again, it stops playing.
+            $("#gifs-appear-here").on("click", ".gif", function (event) {
+                event.preventDefault();
+
+                // gets the current state of the clicked gif 
+                var state = $(this).attr("data-state");
+
+                // according to the current state gifs toggle between animate and still 
+                if (state === "still") {
+                    $(this).attr("src", $(this).attr("data-animate"));
+                    $(this).attr("data-state", "animate");
+                } else {
+                    $(this).attr("src", $(this).attr("data-still"));
+                    $(this).attr("data-state", "still");
+                }
+
+            })
+
+
+
+
+
+
+
+
+        </script>
+
+</body>
+
+</html>
