@@ -73,8 +73,8 @@
 
             // displayMovieInfo function re-renders the HTML to display the appropriate content
             function displayAnime() {
-
-
+                console.log("click");
+                console.log($(this));
                 // Grabbing and storing the data-anime property value from the button
                 var anime = $("#anime-input").val();
                 console.log(anime);
@@ -102,7 +102,7 @@
 
                         // Setting the src attribute of the image to a property pulled off the result item
                         // add states of animate and still which will be toggled 
-                        animeImage.attr("src", results[i].images.fixed_height.url);
+                        animeImage.attr("src", results[i].images.fixed_height_still.url);
                         animeImage.attr("data-still", results[i].images.fixed_height_still.url);
                         animeImage.attr("data-animate", results[i].images.fixed_height.url)
                         animeImage.attr("data-state", "still")
